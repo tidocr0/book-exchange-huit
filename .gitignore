@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.vite/
+*.local
+.env
+bin/
+obj/
+*.user
+appsettings.Development.json
+.vs/
+.vscode/
+.idea/
+Thumbs.db
