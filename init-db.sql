@@ -60,11 +60,35 @@ CREATE TABLE ListingImages (
 );
 GO
 
+CREATE TABLE SellerAvailability (
+    AvailabilityId INT IDENTITY(1,1) PRIMARY KEY,
+    UserId INT NOT NULL,
+    DayOfWeek TINYINT NOT NULL,
+    TimeSlot TINYINT NOT NULL,
+    CONSTRAINT FK_SellerAvailability_Users FOREIGN KEY (UserId) REFERENCES Users(UserId) ON DELETE CASCADE,
+    CONSTRAINT CK_SellerAvailability_DayOfWeek CHECK (DayOfWeek BETWEEN 0 AND 6),
+    CONSTRAINT CK_SellerAvailability_TimeSlot CHECK (TimeSlot BETWEEN 0 AND 6),
+    CONSTRAINT UQ_SellerAvailability UNIQUE (UserId, DayOfWeek, TimeSlot)
+);
+GO
+
+CREATE TABLE SellerBlackoutDates (
+    BlackoutId INT IDENTITY(1,1) PRIMARY KEY,
+    UserId INT NOT NULL,
+    BlackoutDate DATE NOT NULL,
+    TimeSlot TINYINT NULL,
+    CONSTRAINT FK_SellerBlackoutDates_Users FOREIGN KEY (UserId) REFERENCES Users(UserId) ON DELETE CASCADE,
+    CONSTRAINT CK_SellerBlackoutDates_TimeSlot CHECK (TimeSlot IS NULL OR (TimeSlot BETWEEN 0 AND 6)),
+    CONSTRAINT UQ_SellerBlackoutDates UNIQUE (UserId, BlackoutDate, TimeSlot)
+);
+GO
+
 CREATE TABLE Meetings (
     MeetingId INT IDENTITY(1,1) PRIMARY KEY,
     ListingId INT NOT NULL,
     BuyerId INT NOT NULL,
     ProposedTime DATETIME NOT NULL,
+    Location NVARCHAR(200) NULL,
     Status TINYINT NOT NULL DEFAULT 0,
     CreatedAt DATETIME NOT NULL DEFAULT GETDATE(),
     CONSTRAINT FK_Meetings_Listings FOREIGN KEY (ListingId) REFERENCES Listings(ListingId),
